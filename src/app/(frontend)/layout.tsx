@@ -2,8 +2,8 @@ import React from 'react'
 import './styles.css'
 
 export const metadata = {
-  description: 'Professional industrial products and solutions',
-  title: 'Hongsen Industrial Products',
+  description: 'PT Wahana Jaya Dinamika - Motor & Pneumatic Vibrator Specialist PT Wahjadi CONCRETE INTERNAL VIBRATOr MOTOR & GEAR BOX RUBBER SUSPENSION',
+  title: 'PT Wahana Jaya Dinamika - Motor & Pneumatic Vibrator Specialist',
 }
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
