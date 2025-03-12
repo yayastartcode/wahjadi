@@ -9,31 +9,46 @@ interface LocationData {
   address: string;
   phone: string;
   email: string;
+  whatsapp?: string;
 }
 
 const LocationMap = () => {
   const [locationData, setLocationData] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [siteSettings, setSiteSettings] = useState<{ contactInfo: { whatsapp?: string } } | null>(null);
 
   useEffect(() => {
-    const fetchLocationData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/location');
-        if (!response.ok) {
+        const [locationResponse, settingsResponse] = await Promise.all([
+          fetch('/api/location'),
+          fetch('/api/site-settings')
+        ]);
+
+        if (!locationResponse.ok) {
           throw new Error('Failed to fetch location data');
         }
-        const data = await response.json();
-        setLocationData(data);
+        if (!settingsResponse.ok) {
+          throw new Error('Failed to fetch site settings');
+        }
+
+        const [locationData, settingsData] = await Promise.all([
+          locationResponse.json(),
+          settingsResponse.json()
+        ]);
+
+        setLocationData(locationData);
+        setSiteSettings(settingsData);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching location data:', err);
-        setError('Failed to load location data');
+        console.error('Error fetching data:', err);
+        setError('Failed to load data');
         setLoading(false);
       }
     };
 
-    fetchLocationData();
+    fetchData();
   }, []);
 
   // Fallback location data in case CMS data is not available
@@ -48,6 +63,7 @@ const LocationMap = () => {
 
   // Use CMS data if available, otherwise use fallback
   const displayLocation = locationData || fallbackLocation;
+  const whatsappNumber = siteSettings?.contactInfo?.whatsapp;
 
   if (loading) {
     return (
@@ -123,6 +139,27 @@ const LocationMap = () => {
               <p className="text-gray-600">{displayLocation.phone}</p>
             </div>
           </div>
+          
+          {whatsappNumber && (
+            <div className="bg-white p-6 rounded-lg shadow-sm flex items-center">
+              <div className="mr-4 text-red-600">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12c0 2.17.7 4.19 1.88 5.83L2.2 22l4.17-1.68C7.71 21.38 9.82 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-2.03 0-3.93-.61-5.5-1.65l-.39-.23-2.62 1.05.91-2.72-.25-.4C3.39 15.03 3 13.57 3 12c0-4.97 4.03-9 9-9s9 4.03 9 9-4.03 9-9 9zm5.18-12.24c-.12-.18-.44-.33-.92-.57-.48-.24-2.82-1.39-3.26-1.55-.43-.16-.74-.24-1.05.24-.31.48-1.2 1.55-1.47 1.87-.27.31-.54.35-1 .11-.46-.24-1.95-.72-3.72-2.29-1.37-1.22-2.3-2.73-2.57-3.19-.27-.46-.03-.71.2-.94.21-.21.46-.55.69-.82.23-.28.3-.48.46-.8.15-.31.07-.58-.04-.82-.11-.24-.99-2.39-1.36-3.27-.36-.87-.72-.75-.99-.76-.25-.02-.55-.02-.84-.02-.29 0-.77.11-1.17.55-.4.44-1.54 1.5-1.54 3.67 0 2.17 1.58 4.27 1.8 4.56.22.3 3.17 4.85 7.69 6.8 1.07.46 1.91.74 2.56.95.93.29 1.77.25 2.44.15.74-.11 2.28-.93 2.6-1.83.32-.9.32-1.67.22-1.83z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800">WhatsApp</h3>
+                <a 
+                  href={`https://wa.me/${whatsappNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-600 hover:text-red-600"
+                >
+                  {whatsappNumber}
+                </a>
+              </div>
+            </div>
+          )}
           
           <div className="bg-white p-6 rounded-lg shadow-sm flex items-center">
             <div className="mr-4 text-red-600">
