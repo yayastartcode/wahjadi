@@ -52,7 +52,7 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-24">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center">
@@ -60,18 +60,18 @@ const Header = () => {
                 <Image 
                   src={headerData.logo.url} 
                   alt={headerData.logo.alt || "Company Logo"} 
-                  width={150} 
-                  height={40}
-                  className="h-10 w-auto"
+                  width={200} 
+                  height={90}
+                  className="h-20 w-auto"
                   priority
                 />
               ) : (
                 <Image 
                   src="/logo.png" 
                   alt="Company Logo" 
-                  width={150} 
-                  height={40}
-                  className="h-10 w-auto"
+                  width={200} 
+                  height={90}
+                  className="h-20 w-auto"
                   priority
                 />
               )}

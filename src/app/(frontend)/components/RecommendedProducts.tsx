@@ -1,6 +1,18 @@
-import React from 'react'
+"use client";
+
+import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+
+interface Product {
+  id: string;
+  title: string;
+  slug: string;
+  image: {
+    url: string;
+    alt?: string;
+  };
+}
 
 // Product card component
 const ProductCard = ({ 
@@ -33,54 +45,111 @@ const ProductCard = ({
 }
 
 const RecommendedProducts = () => {
-  // Product data
-  const products = [
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        setProducts(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products');
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Fallback products in case CMS data is not available
+  const fallbackProducts = [
     {
-      id: 1,
+      id: '1',
       title: 'Air Motor',
-      image: 'https://www.depragusa.com/files/images/products/pneumatic-motors/basic-line-stainless-steel-motors-700x700.png',
-      link: '/products/air-motor'
+      image: {
+        url: 'https://www.depragusa.com/files/images/products/pneumatic-motors/basic-line-stainless-steel-motors-700x700.png',
+        alt: 'Air Motor'
+      },
+      slug: 'air-motor'
     },
     {
-      id: 2,
+      id: '2',
       title: 'Air Winch',
-      image: 'https://www.ingersollrand.com/content/dam/ir-na/northern-america/products/lifting/air-winches/Utility-Winch/IR-Utility-Winch-700x700.jpg',
-      link: '/products/air-winch'
+      image: {
+        url: 'https://www.ingersollrand.com/content/dam/ir-na/northern-america/products/lifting/air-winches/Utility-Winch/IR-Utility-Winch-700x700.jpg',
+        alt: 'Air Winch'
+      },
+      slug: 'air-winch'
     },
     {
-      id: 3,
+      id: '3',
+      title: 'Air Hoist',
+      image: {
+        url: 'https://www.ingersollrand.com/content/dam/ir-na/northern-america/products/lifting/air-hoists/Pendant-Air-Hoist/IR-Pendant-Air-Hoist-700x700.jpg',
+        alt: 'Air Hoist'
+      },
+      slug: 'air-hoist'
+    },
+    {
+      id: '4',
       title: 'Air Mixer',
-      image: 'https://www.depragusa.com/files/images/products/air-motors/mixer-drives-700x700.png',
-      link: '/products/air-mixer'
+      image: {
+        url: 'https://www.depragusa.com/files/images/products/pneumatic-motors/basic-line-stainless-steel-motors-700x700.png',
+        alt: 'Air Mixer'
+      },
+      slug: 'air-mixer'
     }
   ];
+
+  // Use CMS data if available, otherwise use fallback
+  const displayProducts = products.length > 0 ? products : fallbackProducts;
+
+  if (loading) {
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold inline-block">
+              Recommended <span className="text-blue-600">Products</span>
+            </h2>
+          </div>
+          <div className="flex justify-center">
+            <div className="animate-pulse text-gray-500">Loading products...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    console.error('Error in RecommendedProducts component:', error);
+    // Continue with fallback products
+  }
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
-          <div>
-            <h2 className="text-3xl font-bold mb-2">Recommended Products</h2>
-            <div className="w-16 h-1 bg-red-600"></div>
-          </div>
-          
-          <Link href="/products" className="inline-flex items-center mt-4 md:mt-0 text-gray-700 hover:text-red-600 group">
-            <span className="flex items-center">
-              <span className="w-3 h-3 bg-red-600 mr-2"></span>
-              <span className="w-3 h-3 bg-red-600 mr-2"></span>
-              <span className="w-3 h-3 bg-red-600 mr-2"></span>
-            </span>
-            <span className="font-medium">Explore all products</span>
-          </Link>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold inline-block">
+            Recommended <span className="text-red-600">Products</span>
+          </h2>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map(product => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {displayProducts.map((product) => (
             <ProductCard 
               key={product.id}
-              image={product.image}
+              image={product.image.url} 
               title={product.title}
-              link={product.link}
+              link={`/products/${product.slug}`}
             />
           ))}
         </div>
