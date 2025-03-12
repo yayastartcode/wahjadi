@@ -2,14 +2,52 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+
+interface NavLink {
+  label: string;
+  url: string;
+  isExternal?: boolean;
+}
+
+interface HeaderData {
+  title: string;
+  logo: {
+    url: string;
+    alt?: string;
+  };
+  navLinks: NavLink[];
+}
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [headerData, setHeaderData] = useState<HeaderData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+
+  useEffect(() => {
+    const fetchHeaderData = async () => {
+      try {
+        const response = await fetch('/api/header');
+        if (!response.ok) {
+          throw new Error('Failed to fetch header data');
+        }
+        const data = await response.json();
+        setHeaderData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching header data:', err);
+        setError('Failed to load header data');
+        setLoading(false);
+      }
+    };
+
+    fetchHeaderData();
+  }, []);
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -18,34 +56,68 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center">
-              <Image 
-                src="/logo.png" 
-                alt="Hongsen Logo" 
-                width={150} 
-                height={40}
-                className="h-10 w-auto"
-                priority
-              />
+              {headerData?.logo ? (
+                <Image 
+                  src={headerData.logo.url} 
+                  alt={headerData.logo.alt || "Company Logo"} 
+                  width={150} 
+                  height={40}
+                  className="h-10 w-auto"
+                  priority
+                />
+              ) : (
+                <Image 
+                  src="/logo.png" 
+                  alt="Company Logo" 
+                  width={150} 
+                  height={40}
+                  className="h-10 w-auto"
+                  priority
+                />
+              )}
             </Link>
           </div>
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-red-600 font-medium border-b-2 border-red-600 py-2">
-              HOME
-            </Link>
-            <Link href="/about" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-              ABOUT
-            </Link>
-            <Link href="/product" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-              PRODUCT
-            </Link>
-            <Link href="/news" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-              NEWS
-            </Link>
-            <Link href="/contact" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-              CONTACT
-            </Link>
+            {headerData?.navLinks ? (
+              headerData.navLinks.map((link, index) => (
+                link.isExternal ? (
+                  <a 
+                    key={index}
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link 
+                    key={index}
+                    href={link.url} 
+                    className={`text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2 ${link.url === '/' ? 'text-red-600 border-b-2 border-red-600' : ''}`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              ))
+            ) : (
+              <>
+                <Link href="/" className="text-red-600 font-medium border-b-2 border-red-600 py-2">
+                  HOME
+                </Link>
+                <Link href="/about" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
+                  ABOUT
+                </Link>
+                <Link href="/product" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
+                  PRODUCT
+                </Link>
+                <Link href="/contact" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
+                  CONTACT
+                </Link>
+              </>
+            )}
           </nav>
           
           {/* Right side - Language & Search */}
@@ -87,21 +159,44 @@ const Header = () => {
         {/* Mobile menu, show/hide based on menu state */}
         <div className={`md:hidden ${mobileMenuOpen ? 'block' : 'hidden'}`}>
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200">
-            <Link href="/" className="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-              HOME
-            </Link>
-            <Link href="/about" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-              ABOUT
-            </Link>
-            <Link href="/product" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-              PRODUCT
-            </Link>
-            <Link href="/news" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-              NEWS
-            </Link>
-            <Link href="/contact" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-              CONTACT
-            </Link>
+            {headerData?.navLinks ? (
+              headerData.navLinks.map((link, index) => (
+                link.isExternal ? (
+                  <a 
+                    key={index}
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link 
+                    key={index}
+                    href={link.url} 
+                    className={`block px-3 py-2 rounded-md text-base font-medium ${link.url === '/' ? 'text-red-600' : 'text-gray-600 hover:text-red-600'}`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              ))
+            ) : (
+              <>
+                <Link href="/" className="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+                  HOME
+                </Link>
+                <Link href="/about" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+                  ABOUT
+                </Link>
+                <Link href="/product" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+                  PRODUCT
+                </Link>
+                <Link href="/contact" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
+                  CONTACT
+                </Link>
+              </>
+            )}
             
             {/* Mobile language and search */}
             <div className="flex items-center justify-between px-3 py-2">

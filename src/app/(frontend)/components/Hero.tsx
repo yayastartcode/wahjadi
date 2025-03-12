@@ -3,8 +3,21 @@
 import Image from 'next/image'
 import React, { useState, useEffect, useCallback } from 'react'
 
-// Define the slider images
-const sliderImages = [
+interface Slide {
+  title: string;
+  image: {
+    url: string;
+    alt?: string;
+  };
+}
+
+interface HeroData {
+  title: string;
+  slides: Slide[];
+}
+
+// Fallback slider images in case CMS data is not available
+const fallbackSliderImages = [
   {
     id: 1,
     src: "https://shopcdnpro.grainajz.com/102/upload/slide/f81b308af89c801abea9c1bfb7cdf7aa40efa4c7116142a71828e9f623c87a20.jpg",
@@ -25,7 +38,42 @@ const sliderImages = [
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [heroData, setHeroData] = useState<HeroData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Use CMS data if available, otherwise use fallback
+  const sliderImages = heroData?.slides
+    ? heroData.slides.map((slide, index) => ({
+        id: index + 1,
+        src: slide.image.url,
+        alt: slide.image.alt || slide.title,
+        title: slide.title
+      }))
+    : fallbackSliderImages;
+    
   const slideCount = sliderImages.length;
+  
+  // Fetch hero data from the CMS
+  useEffect(() => {
+    const fetchHeroData = async () => {
+      try {
+        const response = await fetch('/api/hero');
+        if (!response.ok) {
+          throw new Error('Failed to fetch hero data');
+        }
+        const data = await response.json();
+        setHeroData(data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching hero data:', err);
+        setError('Failed to load hero data');
+        setLoading(false);
+      }
+    };
+
+    fetchHeroData();
+  }, []);
   
   // Function to go to next slide
   const nextSlide = useCallback(() => {
