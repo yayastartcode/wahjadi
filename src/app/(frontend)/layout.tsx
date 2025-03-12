@@ -3,12 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import './styles.css'
 
-export const metadata = {
-  description: 'PT Wahana Jaya Dinamika - Motor & Pneumatic Vibrator Specialist PT Wahjadi CONCRETE INTERNAL VIBRATOr MOTOR & GEAR BOX RUBBER SUSPENSION',
-  title: 'PT Wahana Jaya Dinamika - Motor & Pneumatic Vibrator Specialist',
-  robots:'index,follow',
-}
-
 const WhatsAppButton = () => {
   const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
 
