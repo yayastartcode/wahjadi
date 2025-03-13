@@ -4,9 +4,9 @@ import { Metadata } from 'next';
 import WhatsAppButtonClient from './components/WhatsAppButton';
 
 export const metadata: Metadata = {
-  title: 'PT. Wahana Jaya Distribusi - Industrial Equipment Supplier',
-  description: 'Leading industrial equipment supplier in Indonesia, providing high-quality products and solutions for various industrial applications.',
-  keywords: 'industrial equipment, supplier, Indonesia, industrial solutions',
+  title: 'PT Wahana Jaya Dinamika - Motor & Pneumatic Vibrator Specialist',
+  description: 'PT Wahana Jaya Dinamika - Motor & Pneumatic Vibrator Specialist PT Wahjadi Concrete internal vibrator motor & gear box rubber suspension',
+  keywords: 'motor, pneumatic, vibrator, industrial equipment, supplier, Indonesia, industrial solutions',
   robots: 'index, follow',
 };
 

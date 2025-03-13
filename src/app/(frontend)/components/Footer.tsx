@@ -78,33 +78,36 @@ const Footer = () => {
     });
   };
 
-  // Fallback site settings in case CMS data is not available
-  const fallbackSettings = {
-    companyName: 'Hongsen Industrial',
-    contactInfo: {
-      address: 'Rudong, Jiangsu province, China',
-      phone: '+86 123 456 7890',
-      email: 'info@hongsen.com'
-    },
-    footerText: {
-      root: {
-        children: [
-          {
-            type: 'paragraph',
-            children: [
-              {
-                text: 'Professional manufacturer of industrial air motors, air winches, air hoists, and air mixers.'
-              }
-            ]
-          }
-        ]
-      }
-    },
-    copyright: `© ${new Date().getFullYear()} Hongsen Industrial. All rights reserved.`
-  };
-
-  // Use CMS data if available, otherwise use fallback
-  const displaySettings = siteSettings || fallbackSettings;
+  // No fallback settings - we'll handle missing data gracefully
+  const displaySettings = siteSettings;
+  
+  // If no data is available, return minimal footer
+  if (!displaySettings) {
+    if (loading) {
+      return (
+        <footer className="bg-gray-900 text-white">
+          <div className="max-w-[1920px] mx-auto px-4 py-12">
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-800 rounded w-1/4 mb-8"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="h-32 bg-gray-800 rounded"></div>
+                <div className="h-32 bg-gray-800 rounded"></div>
+                <div className="h-32 bg-gray-800 rounded"></div>
+                <div className="h-32 bg-gray-800 rounded"></div>
+              </div>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+    return (
+      <footer className="bg-gray-900 text-white">
+        <div className="max-w-[1920px] mx-auto px-4 py-12 text-center">
+          <p className="text-gray-400">© {new Date().getFullYear()} PT. Wahana Jaya Dharma. All rights reserved.</p>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -137,23 +140,16 @@ const Footer = () => {
           
           {/* Footer Column 2 */}
           <div>
-            <h3 className="text-xl font-semibold mb-4">Products</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white">Air Motors</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Air Winches</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Air Hoists</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Air Mixers</a></li>
-            </ul>
+     
           </div>
           
           {/* Footer Column 3 */}
           <div>
             <h3 className="text-xl font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white">About Us</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Contact</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">News</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white">Careers</a></li>
+              <li><Link href="/about" className="text-gray-400 hover:text-white">About Us</Link></li>
+              <li><Link href="/contact" className="text-gray-400 hover:text-white">Contact</Link></li>
+              <li><Link href="/products" className="text-gray-400 hover:text-white">Products</Link></li>
             </ul>
           </div>
           

@@ -51,18 +51,8 @@ const LocationMap = () => {
     fetchData();
   }, []);
 
-  // Fallback location data in case CMS data is not available
-  const fallbackLocation = {
-    title: 'Our Location',
-    description: 'Visit our facility in Rudong, Jiangsu province, China. Our plant is located around 200 km away from Shanghai, covering an area of 64,000 square meters.',
-    mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3387.3514956665463!2d121.0778!3d31.9139!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzHCsDU0JzUwLjAiTiAxMjHCsDA0JzQwLjEiRQ!5e0!3m2!1sen!2sus!4v1615301717693!5m2!1sen!2sus',
-    address: 'Rudong, Jiangsu province, China',
-    phone: '+86 123 456 7890',
-    email: 'info@hongsen.com'
-  };
-
-  // Use CMS data if available, otherwise use fallback
-  const displayLocation = locationData || fallbackLocation;
+  // No fallback data - we'll handle missing data gracefully
+  const displayLocation = locationData;
   const whatsappNumber = siteSettings?.contactInfo?.whatsapp;
 
   if (loading) {
@@ -82,9 +72,22 @@ const LocationMap = () => {
     );
   }
 
-  if (error) {
+  if (error || !displayLocation) {
     console.error('Error in LocationMap component:', error);
-    // Continue with fallback location
+    return (
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold inline-block">
+              Our <span className="text-red-600">Location</span>
+            </h2>
+          </div>
+          <div className="flex justify-center">
+            <div className="text-gray-500">Location information is currently unavailable.</div>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   return (

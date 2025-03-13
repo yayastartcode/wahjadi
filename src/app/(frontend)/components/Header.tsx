@@ -59,21 +59,14 @@ const Header = () => {
               {headerData?.logo ? (
                 <Image 
                   src={headerData.logo.url} 
-                  alt={headerData.logo.alt || "Company Logo"} 
+                  alt={headerData.logo.alt || ""} 
                   width={200} 
                   height={90}
                   className="h-20 w-auto"
                   priority
                 />
               ) : (
-                <Image 
-                  src="/logo.png" 
-                  alt="Company Logo" 
-                  width={200} 
-                  height={90}
-                  className="h-20 w-auto"
-                  priority
-                />
+                <div className="h-20 w-48 bg-gray-100 animate-pulse rounded"></div>
               )}
             </Link>
           </div>
@@ -103,19 +96,11 @@ const Header = () => {
                 )
               ))
             ) : (
+              // Show loading placeholders instead of fallback links
               <>
-                <Link href="/" className="text-red-600 font-medium border-b-2 border-red-600 py-2">
-                  HOME
-                </Link>
-                <Link href="/about" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-                  ABOUT
-                </Link>
-                <Link href="/product" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-                  PRODUCT
-                </Link>
-                <Link href="/contact" className="text-gray-600 hover:text-red-600 font-medium hover:border-b-2 hover:border-red-600 py-2">
-                  CONTACT
-                </Link>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-4 w-16 bg-gray-100 rounded animate-pulse"></div>
+                ))}
               </>
             )}
           </nav>
@@ -171,19 +156,11 @@ const Header = () => {
                 )
               ))
             ) : (
+              // Show loading placeholders instead of fallback links
               <>
-                <Link href="/" className="text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-                  HOME
-                </Link>
-                <Link href="/about" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-                  ABOUT
-                </Link>
-                <Link href="/product" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-                  PRODUCT
-                </Link>
-                <Link href="/contact" className="text-gray-600 hover:text-red-600 block px-3 py-2 rounded-md text-base font-medium">
-                  CONTACT
-                </Link>
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-4 w-16 my-2 bg-gray-100 rounded animate-pulse"></div>
+                ))}
               </>
             )}
             

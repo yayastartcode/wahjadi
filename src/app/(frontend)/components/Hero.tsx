@@ -16,24 +16,7 @@ interface HeroData {
   slides: Slide[];
 }
 
-// Fallback slider images in case CMS data is not available
-const fallbackSliderImages = [
-  {
-    id: 1,
-    src: "https://shopcdnpro.grainajz.com/102/upload/slide/f81b308af89c801abea9c1bfb7cdf7aa40efa4c7116142a71828e9f623c87a20.jpg",
-    alt: "Industrial Air Products 1"
-  },
-  {
-    id: 2,
-    src: "https://shopcdnpro.grainajz.com/102/upload/slide/f81b308af89c801abea9c1bfb7cdf7aa40efa4c7116142a71828e9f623c87a20.jpg",
-    alt: "Industrial Air Products 2"
-  },
-  {
-    id: 3,
-    src: "https://shopcdnpro.grainajz.com/102/upload/slide/f81b308af89c801abea9c1bfb7cdf7aa40efa4c7116142a71828e9f623c87a20.jpg",
-    alt: "Industrial Air Products 3"
-  }
-];
+// No fallback images - we'll handle empty state gracefully
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,7 +25,7 @@ const Hero = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Use CMS data if available, otherwise use fallback
+  // Use CMS data only, no fallbacks
   const sliderImages = heroData?.slides
     ? heroData.slides.map((slide, index) => ({
         id: index + 1,
@@ -50,7 +33,7 @@ const Hero = () => {
         alt: slide.image.alt || slide.title,
         title: slide.title
       }))
-    : fallbackSliderImages;
+    : [];
     
   const slideCount = sliderImages.length;
   
@@ -110,6 +93,18 @@ const Hero = () => {
     };
   }, [isAutoPlaying, nextSlide]);
   
+  // If no slides are available, return null or a minimal placeholder
+  if (sliderImages.length === 0) {
+    if (loading) {
+      return (
+        <div className="relative w-full h-[300px] lg:h-[500px] max-w-[1920px] mx-auto overflow-hidden bg-gray-100 flex items-center justify-center">
+          <div className="animate-pulse w-32 h-32 rounded-full bg-gray-200"></div>
+        </div>
+      );
+    }
+    return null; // Return null if no slides and not loading
+  }
+
   return (
     <div className="relative w-full h-[300px] lg:h-[900px] max-w-[1920px] mx-auto overflow-hidden">
       {/* Slider Container */}
@@ -138,16 +133,18 @@ const Hero = () => {
       </div>
       
       {/* Slider Navigation Dots */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
-        {sliderImages.map((_, index) => (
-          <button 
-            key={index} 
-            onClick={() => goToSlide(index)}
-            className={`h-1 transition-all duration-300 ${index === currentSlide ? 'w-8 bg-red-600' : 'w-5 bg-gray-300 hover:bg-red-600'}`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {sliderImages.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
+          {sliderImages.map((_, index) => (
+            <button 
+              key={index} 
+              onClick={() => goToSlide(index)}
+              className={`h-1 transition-all duration-300 ${index === currentSlide ? 'w-8 bg-red-600' : 'w-5 bg-gray-300 hover:bg-red-600'}`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

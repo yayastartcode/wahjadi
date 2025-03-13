@@ -12,6 +12,7 @@ interface Product {
     url: string;
     alt?: string;
   };
+  category?: string;
 }
 
 // Product card component
@@ -38,13 +39,18 @@ const ProductCard = ({
         </div>
         <div className="p-4 text-center border-t">
           <h3 className="font-medium text-gray-800">{title}</h3>
+          <div className="mt-2">
+            <span className="inline-block bg-red-100 text-red-600 px-3 py-1 text-sm rounded-full">
+              View Details
+            </span>
+          </div>
         </div>
       </Link>
     </div>
   )
 }
 
-const RecommendedProducts = () => {
+const ProductsGrid = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -59,6 +65,9 @@ const RecommendedProducts = () => {
         const data = await response.json();
         // Ensure data is an array and has the correct structure
         const productsArray = Array.isArray(data) ? data : [];
+        
+
+        
         setProducts(productsArray);
         setLoading(false);
       } catch (err) {
@@ -71,64 +80,36 @@ const RecommendedProducts = () => {
     fetchProducts();
   }, []);
 
+
+
   if (loading) {
     return (
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold inline-block">
-              Our <span className="text-red-600">Products</span>
-            </h2>
-          </div>
-          <div className="flex justify-center">
-            <div className="animate-pulse text-gray-500">Loading products...</div>
-          </div>
-        </div>
-      </section>
+      <div className="flex justify-center py-12">
+        <div className="animate-pulse text-gray-500">Loading products...</div>
+      </div>
     );
   }
 
   if (error) {
-    console.error('Error in RecommendedProducts component:', error);
+    console.error('Error in ProductsGrid component:', error);
     return (
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold inline-block">
-              Our <span className="text-red-600">Products</span>
-            </h2>
-          </div>
-          <div className="text-center text-red-600">{error}</div>
-        </div>
-      </section>
+      <div className="text-center text-red-600 py-12">{error}</div>
     );
   }
 
   if (products.length === 0) {
     return (
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold inline-block">
-              Our <span className="text-red-600">Products</span>
-            </h2>
-          </div>
-          <div className="text-center text-gray-600">No products available at the moment.</div>
-        </div>
-      </section>
+      <div className="text-center text-gray-600 py-12">No products available at the moment.</div>
     );
   }
 
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold inline-block">
-            Our <span className="text-red-600">Products</span>
-          </h2>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div>
+
+      
+      {/* Products Grid */}
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {products.map((product) => (
             <ProductCard 
               key={product.id}
@@ -138,9 +119,13 @@ const RecommendedProducts = () => {
             />
           ))}
         </div>
-      </div>
-    </section>
+      ) : (
+        <div className="text-center py-8 text-gray-600">
+          No products available at the moment.
+        </div>
+      )}
+    </div>
   )
 }
 
-export default RecommendedProducts
+export default ProductsGrid

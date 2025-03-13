@@ -71,7 +71,7 @@ const AboutUs = () => {
   return (
     <section className="py-16 bg-gray-100">
       <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center mb-12">{aboutUsData?.title || 'About Us'}</h2>
+        <h2 className="text-3xl font-bold text-center mb-12">{aboutUsData?.title}</h2>
         
         {aboutUsData?.subtitle && (
           <p className="text-center max-w-4xl mx-auto mb-12 text-gray-600">
@@ -110,7 +110,7 @@ const AboutUs = () => {
             <div className="md:w-1/2 relative h-[300px] md:h-[400px]">
               <Image 
                 src={aboutUsData.image.url}
-                alt={aboutUsData.imageAlt || 'About Us Image'}
+                alt={aboutUsData.imageAlt}
                 fill
                 style={{ objectFit: 'cover' }}
                 className="rounded-lg"
