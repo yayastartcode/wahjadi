@@ -92,13 +92,13 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     : descriptionText;
 
   return {
-    title: `${product.title} | PT. Wahana Jaya Dharma`,
-    description: truncatedDescription || `${product.title} - PT. Wahana Jaya Dharma`,
-    keywords: ['PT. Wahana Jaya Dharma', product.title, 'industrial products'],
+    title: `${product.title} | PT. Wahana Jaya Dinamika`,
+    description: truncatedDescription || `${product.title} - PT. Wahana Jaya Dinamika`,
+    keywords: ['PT. Wahana Jaya Dinamika', product.title, 'industrial products'],
     robots: 'index, follow',
     openGraph: {
       title: product.title,
-      description: truncatedDescription || `${product.title} - PT. Wahana Jaya Dharma`,
+      description: truncatedDescription || `${product.title} - PT. Wahana Jaya Dinamika`,
       type: 'website',
       url: `${process.env.NEXT_PUBLIC_SITE_URL || ''}/products/${slug}`,
       images: [{
@@ -107,12 +107,12 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
         width: 1200,
         height: 630,
       }],
-      siteName: 'PT. Wahana Jaya Dharma',
+      siteName: 'PT. Wahana Jaya Dinamika',
     },
     twitter: {
       card: 'summary_large_image',
       title: product.title,
-      description: truncatedDescription || `${product.title} - PT. Wahana Jaya Dharma`,
+      description: truncatedDescription || `${product.title} - PT. Wahana Jaya Dinamika`,
       images: [product.image.url],
     },
   };
